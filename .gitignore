@@ -1,0 +1,27 @@
+# --- .NET / Visual Studio ---
+**/bin/
+**/obj/
+**/.vs/
+*.user
+*.suo
+*.swp
+*.userprefs
+*.csproj.user
+*.coverage
+*.coveragexml
+
+# Dotnet artifacts
+**/TestResults/
+**/publish/
+
+# --- Node / Angular ---
+client/node_modules/
+client/dist/
+client/.angular/cache/
+npm-debug.log*
+yarn-error.log*
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
