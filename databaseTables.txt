@@ -1,0 +1,72 @@
+-- Stores table
+CREATE TABLE Stores (
+    StoreId INT PRIMARY KEY IDENTITY(1,1),
+    StoreCode NVARCHAR(50),
+    StoreName NVARCHAR(100)
+);
+
+-- Products table
+CREATE TABLE Products (
+    ProductId INT PRIMARY KEY IDENTITY(1,1),
+    ProductCode NVARCHAR(50),
+    ProductName NVARCHAR(100)
+);
+
+-- Sales table
+CREATE TABLE Sales (
+    SaleId INT PRIMARY KEY IDENTITY(1,1),
+    InvoiceNo NVARCHAR(50),
+    InvoiceDate DATE,
+    StoreId INT FOREIGN KEY REFERENCES Stores(StoreId),
+    ProductId INT FOREIGN KEY REFERENCES Products(ProductId),
+    Quantity INT,
+    UnitPrice DECIMAL(18,2),
+    TotalAmount AS (Quantity * UnitPrice) PERSISTED
+);
+
+-- Sample data
+INSERT INTO Stores (StoreCode, StoreName) VALUES
+('S001', 'Dhanmondi'), ('S002', 'Gulshan'), ('S003', 'Mirpur');
+
+INSERT INTO Products (ProductCode, ProductName) VALUES
+('P001', 'Shirt'), ('P002', 'Pants'), ('P003', 'Jacket');
+
+INSERT INTO Sales (InvoiceNo, InvoiceDate, StoreId, ProductId, Quantity, UnitPrice) VALUES
+('INV-1001', '2025-06-01', 1, 1, 10, 500),
+('INV-1002', '2025-06-02', 1, 2, 5, 800),
+('INV-1003', '2025-06-03', 2, 3, 3, 1200),
+('INV-1004', '2025-06-04', 3, 1, 15, 450),
+('INV-1005', '2025-06-05', 2, 2, 8, 700);
+
+-- Main template table
+CREATE TABLE ReportTemplates (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100),
+    Description NVARCHAR(255),
+    CreatedDate DATETIME DEFAULT GETDATE()
+);
+
+-- Selected fields to show in report
+CREATE TABLE ReportTemplateFields (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    ReportTemplateId INT FOREIGN KEY REFERENCES ReportTemplates(Id),
+    FieldName NVARCHAR(100),
+    DisplayName NVARCHAR(100),
+    SortOrder INT
+);
+
+-- Filters to apply for report
+CREATE TABLE ReportTemplateFilters (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    ReportTemplateId INT FOREIGN KEY REFERENCES ReportTemplates(Id),
+    FilterKey NVARCHAR(100),       -- e.g. "DateFrom"
+    FilterType NVARCHAR(50),       -- e.g. "Date", "Dropdown"
+    FilterValue NVARCHAR(200)      -- can be null, used for static defaults
+);
+
+-- SQL query backing the report
+CREATE TABLE ReportTemplateSources (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    ReportTemplateId INT FOREIGN KEY REFERENCES ReportTemplates(Id),
+    SqlQuery NVARCHAR(MAX)
+);
