@@ -1,0 +1,456 @@
+/* Main Container */
+.report-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Section */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.controls {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-end;
+}
+
+.form-group {
+  margin-bottom: 0;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.form-control {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 250px;
+}
+
+/* Buttons */
+.button-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #4285f4;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #3367d6;
+}
+
+.btn-success {
+  background-color: #34a853;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #2d9248;
+}
+
+.btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Filters Section */
+.filters-section {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 2rem;
+}
+
+.filters-section h3 {
+  margin-top: 0;
+  color: #555;
+}
+
+/* Results Section */
+.results-section {
+  margin-top: 2rem;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.badge {
+  background-color: #e0e0e0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+/* Table Styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background-color: #343a40;
+  color: white;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.table tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  margin-top: 2rem;
+}
+
+.empty-content {
+  text-align: center;
+  color: #777;
+}
+
+.empty-content i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+.group-options-panel {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 2rem;
+  border: 1px solid #dee2e6;
+}
+
+.group-options-panel .form-group {
+  margin-bottom: 1rem;
+}
+
+.group-options-panel select[multiple] {
+  min-height: 120px;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+}
+
+.group-header {
+  background-color: #e9ecef;
+  font-weight: bold;
+}
+
+.group-header td {
+  padding: 10px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* Group Footer Styling */
+.group-footer {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  border-top: 2px solid #dee2e6;
+}
+
+.group-footer td {
+  padding: 8px;
+}
+
+/* Badge styling */
+.badge-secondary {
+  background-color: #6c757d;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+.ml-2 {
+  margin-left: 8px;
+}
+
+.column-options-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  min-width: 200px;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+}
+
+.column-options-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+}
+
+.column-options-body {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #666;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+/* Hidden column styling */
+.hidden-column {
+  display: none;
+}
+
+/* Group header and footer adjustments for hidden columns */
+.group-header td[colspan] {
+  text-align: left;
+}
+
+/* Make sure the table maintains proper layout when columns are hidden */
+.table {
+  table-layout: fixed;
+}
+
+/* Style for the column options button */
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+/* In report-viewer.component.css */
+
+/* First, ensure the controls container is positioned correctly */
+.controls {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  position: relative; /* This creates a positioning context */
+  flex-wrap: wrap; /* Allow buttons to wrap if needed */
+}
+
+/* Button group styling */
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Position the column button specifically */
+.btn-secondary {
+  position: relative; /* This helps with positioning the dropdown */
+}
+
+/* Updated column options dropdown positioning */
+.column-options-dropdown {
+  position: absolute;
+  top: 100%; /* Position right below the button */
+  right: 0;   /* Align to the right edge of the button */
+  z-index: 1050; /* Ensure it's above everything else */
+  min-width: 200px;
+  max-width: 300px;
+  padding: 12px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 5px; /* Small gap between button and dropdown */
+}
+
+/* Add a triangle pointer to the dropdown */
+.column-options-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -8px; /* Position above the dropdown */
+  right: 20px; /* Align with the button */
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #ddd;
+}
+
+.column-options-dropdown::after {
+  content: '';
+  position: absolute;
+  top: -7px; /* Slightly below the border triangle */
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #fff;
+}
+
+/* Ensure the dropdown doesn't go off-screen */
+@media (max-width: 768px) {
+  .column-options-dropdown {
+    right: auto;
+    left: 0;
+  }
+  
+  .column-options-dropdown::before,
+  .column-options-dropdown::after {
+    right: auto;
+    left: 20px;
+  }
+}
+
+.chart-options-panel {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 2rem;
+  border: 1px solid #dee2e6;
+}
+
+.chart-options-panel .form-group {
+  margin-bottom: 1rem;
+}
+
+.chart-options-panel select[multiple] {
+  min-height: 120px;
+}
+
+/* View Toggle */
+.view-toggle {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-group {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Chart Container */
+.chart-container {
+  position: relative;
+  height: 400px;
+  width: 100%;
+  background-color: white;
+  border-radius: 6px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Chart button styling */
+.btn-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+  color: #212529;
+}
+
+/* Active state for view toggle buttons */
+.btn-outline-primary.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* Chart Options Panel */
+.chart-options-panel {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 2rem;
+  border: 1px solid #dee2e6;
+}
+
+/* Chart Options Grid Layout */
+.chart-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.chart-options-grid .form-group {
+  margin-bottom: 0;
+}
+
+.chart-options-grid select[multiple] {
+  min-height: 120px;
+}
+
+/* Special styling for the button group */
+.chart-options-grid .button-group {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.chart-options-grid .button-group .btn {
+  width: 100%;
+}

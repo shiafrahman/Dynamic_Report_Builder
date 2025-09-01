@@ -1,0 +1,47 @@
+<div class="filters-grid">
+  <div *ngFor="let filter of filters" class="filter-item">
+    <label>{{ filter.label }}</label>
+    <ng-container [ngSwitch]="filter.type">
+      <input *ngSwitchCase="'text'" 
+             [(ngModel)]="filter.value" 
+             class="form-control"
+             [placeholder]="'Enter ' + filter.label" />
+
+      <input *ngSwitchCase="'date'" 
+             type="date" 
+             [(ngModel)]="filter.value" 
+             class="form-control" />
+
+      <!-- <select *ngSwitchCase="'dropdown'" 
+              [(ngModel)]="filter.value" 
+              class="form-control">
+        <option value="" disabled selected>Select {{ filter.label }}</option>
+        <option *ngFor="let opt of filter.options" [value]="opt">{{ opt }}</option>
+      </select> -->
+      <div *ngIf="filter.type === 'dropdown'">
+  
+  <select [(ngModel)]="filter.value" class="custom-dropdown">
+    <option value="">-- Select --</option>
+    <option *ngFor="let opt of filter.options" [value]="opt.value">
+      {{ opt.label }}
+    </option>
+  </select>
+</div>
+    </ng-container>
+  </div>
+</div>
+
+
+
+
+
+<!-- <div *ngFor="let filter of filters">
+      <label>{{ filter.label }}</label>
+      <ng-container [ngSwitch]="filter.type">
+        <input *ngSwitchCase="'text'" [(ngModel)]="filter.value" />
+        <input *ngSwitchCase="'date'" type="date" [(ngModel)]="filter.value" />
+        <select *ngSwitchCase="'dropdown'" [(ngModel)]="filter.value">
+          <option *ngFor="let opt of filter.options" [value]="opt">{{ opt }}</option>
+        </select>
+      </ng-container>
+</div> -->

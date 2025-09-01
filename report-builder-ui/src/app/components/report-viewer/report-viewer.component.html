@@ -1,0 +1,464 @@
+
+<div class="report-container">
+  <!-- Header Section -->
+  <div class="header">
+    <h2>Report Viewer</h2>
+    <div class="controls">
+      <!-- Template Selection -->
+      <div class="form-group">
+        <label for="templateSelect">Select Template</label>
+        <select id="templateSelect" class="form-control" [(ngModel)]="selectedTemplateId" (change)="onTemplateChange()">
+          <option value="" disabled selected>Choose a template</option>
+          <option *ngFor="let t of templates" [value]="t.id">{{ t.name }}</option>
+        </select>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="button-group">
+        <button class="btn btn-primary" (click)="generateReport()" [disabled]="!selectedTemplateId">
+          <i class="fas fa-sync-alt"></i> Generate Report
+        </button>
+        <!-- <button class="btn btn-info" (click)="toggleGroupOptions()" [disabled]="!selectedTemplateId">
+          <i class="fas fa-layer-group"></i> Group Options
+        </button> -->
+        <button class="btn btn-warning" (click)="toggleChartOptions()" [disabled]="!reportData.length">
+          <i class="fas fa-chart-bar"></i> Chart Options
+        </button>
+
+        <button class="btn btn-secondary" (click)="toggleColumnOptions()" [disabled]="!reportData.length">
+          <i class="fas fa-columns"></i> Columns
+        </button>
+        <button class="btn btn-success" (click)="exportExcel()" [disabled]="!reportData.length">
+          <i class="fas fa-file-excel"></i> Export to Excel
+        </button>
+        <!-- <button class="btn btn-danger" (click)="exportPdf()" [disabled]="!reportData.length">
+          <i class="fas fa-file-pdf"></i> Export to PDF
+        </button> -->
+      </div>
+
+      <div *ngIf="showColumnOptions" class="column-options-dropdown">
+        <div class="column-options-header">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="selectAllColumns" 
+                   [checked]="allColumnsSelected" (change)="toggleAllColumns()">
+            <label class="form-check-label" for="selectAllColumns">Select All</label>
+          </div>
+          <button type="button" class="close-button" (click)="toggleColumnOptions()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="column-options-body">
+          <div *ngFor="let field of getReportHeaders()" class="form-check">
+            <input type="checkbox" class="form-check-input" [id]="'col-' + field"
+                   [checked]="isColumnVisible(field)" (change)="toggleColumnVisibility(field)">
+            <label class="form-check-label" [for]="'col-' + field">{{ field }}</label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  
+
+  <!-- Chart Options Panel -->
+  <div *ngIf="showChartOptions" class="chart-options-panel">
+    <div class="chart-options-grid">
+      <div class="form-group">
+        <label>Chart Type</label>
+        <select class="form-control" [(ngModel)]="chartType" (change)="changeChartType(chartType)">
+          <option value="bar">Bar Chart</option>
+          <option value="line">Line Chart</option>
+          <option value="pie">Pie Chart</option>
+          <option value="doughnut">Doughnut Chart</option>
+          <option value="radar">Radar Chart</option>
+          <option value="polarArea">Polar Area Chart</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Label Field (X-Axis)</label>
+        <select class="form-control" [(ngModel)]="chartLabelField">
+          <option *ngFor="let field of getReportHeaders()" [value]="field">{{ field }}</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Data Fields (Y-Axis)</label>
+        <select multiple class="form-control" [(ngModel)]="chartDataFields">
+          <option *ngFor="let field of getReportHeaders()" [value]="field">{{ field }}</option>
+        </select>
+      </div>
+      
+      
+      
+      <div class="form-group button-group">
+        <button class="btn btn-primary" (click)="generateChart()" 
+                [disabled]="!chartLabelField || chartDataFields.length === 0">
+          <i class="fas fa-chart-line"></i> Generate Chart
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div *ngIf="showChartOptions" class="chart-options-panel">
+    <div class="form-group">
+      <label>Chart Type</label>
+      <select class="form-control" [(ngModel)]="chartType" (change)="changeChartType(chartType)">
+        <option value="bar">Bar Chart</option>
+        <option value="line">Line Chart</option>
+        <option value="pie">Pie Chart</option>
+        <option value="doughnut">Doughnut Chart</option>
+        <option value="radar">Radar Chart</option>
+        <option value="polarArea">Polar Area Chart</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label>Label Field (X-Axis)</label>
+      <select class="form-control" [(ngModel)]="chartLabelField">
+        <option *ngFor="let field of getReportHeaders()" [value]="field">{{ field }}</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label>Data Fields (Y-Axis)</label>
+      <select multiple class="form-control" [(ngModel)]="chartDataFields">
+        <option *ngFor="let field of getReportHeaders()" [value]="field">{{ field }}</option>
+      </select>
+    </div>
+    
+     <div class="form-group">
+      <label>Chart Title</label>
+      <input type="text" class="form-control" [(ngModel)]="chartTitle" placeholder="Enter chart title">
+    </div> -->
+    
+    <!-- <div class="form-group">
+      <button class="btn btn-primary" (click)="generateChart()" 
+              [disabled]="!chartLabelField || chartDataFields.length === 0">
+        <i class="fas fa-chart-line"></i> Generate Chart
+      </button>
+    </div>
+  </div> --> 
+
+  <!-- Add this section to show/hide chart view -->
+  <div class="view-toggle" *ngIf="reportData.length">
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-outline-primary" [class.active]="!showChart" 
+              (click)="showChart = false">
+        <i class="fas fa-table"></i> Table View
+      </button>
+      <button type="button" class="btn btn-outline-primary" [class.active]="showChart" 
+              (click)="showChart = true">
+        <i class="fas fa-chart-bar"></i> Chart View
+      </button>
+    </div>
+  </div>
+
+
+
+  <!-- Group Options Panel -->
+  <div *ngIf="showGroupOptions" class="group-options-panel">
+    <div class="form-group">
+      <label>Group By Field</label>
+      <select class="form-control" [(ngModel)]="selectedGroupByField">
+        <option value="">Select a field...</option>
+        <option *ngFor="let field of groupableFields" [value]="field">{{ field }}</option>
+      </select>
+    </div>
+    
+    <div class="form-group" *ngIf="selectedGroupByField">
+      <label>Aggregate Function</label>
+      <select class="form-control" [(ngModel)]="selectedAggregateFunction">
+        <option value="SUM">Sum</option>
+        <option value="COUNT">Count</option>
+        <option value="AVG">Average</option>
+        <option value="MIN">Minimum</option>
+        <option value="MAX">Maximum</option>
+      </select>
+    </div>
+    
+    <div class="form-group" *ngIf="selectedGroupByField">
+      <label>Aggregate Fields (hold Ctrl/Cmd to select multiple)</label>
+      <select multiple class="form-control" [(ngModel)]="selectedAggregateFields">
+        <option *ngFor="let field of numericFields" [value]="field">{{ field }}</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="showSubtotals" [(ngModel)]="showSubtotals">
+        <label class="form-check-label" for="showSubtotals">Show Subtotals</label>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <button class="btn btn-primary" (click)="generateGroupedReport()" 
+              [disabled]="!selectedGroupByField">
+        <i class="fas fa-chart-bar"></i> Generate Grouped Report
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section" *ngIf="metadata.filters.length">
+    <h3>Filters</h3>
+    <app-dynamic-filters [filters]="metadata.filters"></app-dynamic-filters>
+  </div>
+
+  <!-- Results Section -->
+  <div class="results-section" *ngIf="reportData.length">
+    <div class="results-header">
+      <h3>{{ isGroupedReport ? 'Grouped Report Results' : 'Report Results' }}</h3>
+      <span class="badge">{{ reportData.length }} {{ isGroupedReport ? 'groups' : 'records' }} found</span>
+    </div>
+
+    <!-- Chart View -->
+    <div *ngIf="showChart" class="chart-container">
+      <canvas baseChart [type]="chartType" [data]="{ labels: chartLabels, datasets: chartDatasets }" [options]="chartOptions">
+      </canvas>
+    </div>
+    
+    <div *ngIf="!showChart" class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th *ngFor="let key of getReportHeaders()" [class.hidden-column]="!isColumnVisible(key)">{{ key }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Show grouped data if this is a grouped report -->
+          <ng-container *ngIf="isGroupedReport">
+            <ng-container *ngFor="let group of getGroupedData()">
+              <tr class="group-header" [class.hidden-column]="!isColumnVisible(selectedGroupByField)">
+                <td [attr.colspan]="getReportHeaders().length">
+                  <strong>{{ selectedGroupByField }}: {{ group.key }}</strong>
+                  <span class="badge badge-secondary ml-2">{{ group.rows.length }} records</span>
+                </td>
+              </tr>
+              <tr *ngFor="let row of group.rows">
+                <td *ngFor="let key of getReportHeaders()" [class.hidden-column]="!isColumnVisible(key)">{{ row[key] }}</td>
+              </tr>
+              <tr class="group-footer" *ngIf="showSubtotals">
+                <td *ngFor="let key of getReportHeaders()" [class.hidden-column]="!isColumnVisible(key)">
+                  <span *ngIf="key === selectedGroupByField">Subtotal</span>
+                  <span *ngIf="key !== selectedGroupByField">{{ getSubtotal(group, key) }}</span>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+          
+          <!-- Show regular data if this is not a grouped report -->
+          <ng-container *ngIf="!isGroupedReport">
+            <tr *ngFor="let row of reportData">
+              <td *ngFor="let key of getReportHeaders()" [class.hidden-column]="!isColumnVisible(key)">{{ row[key] }}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!reportData.length && selectedTemplateId">
+    <div class="empty-content">
+      <i class="fas fa-chart-bar"></i>
+      <p>No data available. Click "Generate Report" to fetch results.</p>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <div class="report-container">
+
+  <div class="header">
+    <h2>Report Viewer</h2>
+    <div class="controls">
+   
+      <div class="form-group">
+        <label for="templateSelect">Select Template</label>
+        <select id="templateSelect" class="form-control" [(ngModel)]="selectedTemplateId" (change)="onTemplateChange()">
+          <option value="" disabled selected>Choose a template</option>
+          <option *ngFor="let t of templates" [value]="t.id">{{ t.name }}</option>
+        </select>
+      </div>
+
+
+      <div class="button-group">
+        <button class="btn btn-primary" (click)="generateReport()" [disabled]="!selectedTemplateId">
+          <i class="fas fa-sync-alt"></i> Generate Report
+        </button>
+        <button class="btn btn-success" (click)="exportExcel()" [disabled]="!reportData.length">
+          <i class="fas fa-file-excel"></i> Export to Excel
+        </button>
+        <button class="btn btn-danger" (click)="exportPdf()" [disabled]="!reportData.length">
+          <i class="fas fa-file-pdf"></i> Export to PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="filters-section" *ngIf="metadata.filters.length">
+    <h3>Filters</h3>
+    <app-dynamic-filters [filters]="metadata.filters"></app-dynamic-filters>
+  </div>
+
+ 
+  <div class="results-section" *ngIf="reportData.length">
+    <div class="results-header">
+      <h3>Report Results</h3>
+      <span class="badge">{{ reportData.length }} records found</span>
+    </div>
+    
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th *ngFor="let key of metadata.fields">{{ key }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of reportData">
+            <td *ngFor="let key of metadata.fields">{{ row[key] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <div class="empty-state" *ngIf="!reportData.length && selectedTemplateId">
+    <div class="empty-content">
+      <i class="fas fa-chart-bar"></i>
+      <p>No data available. Click "Generate Report" to fetch results.</p>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="button-group">
+  <button class="btn btn-info" (click)="toggleGroupOptions()" [disabled]="!selectedTemplateId">
+    <i class="fas fa-layer-group"></i> Group Options
+  </button>
+</div>
+
+
+<div *ngIf="showGroupOptions" class="group-options-panel">
+  <div class="form-group">
+    <label>Group By Field</label>
+    <select class="form-control" [(ngModel)]="selectedGroupByField">
+      <option value="">Select a field...</option>
+      <option *ngFor="let field of groupableFields" [value]="field">{{ field }}</option>
+    </select>
+  </div>
+  
+  <div class="form-group" *ngIf="selectedGroupByField">
+    <label>Aggregate Function</label>
+    <select class="form-control" [(ngModel)]="selectedAggregateFunction">
+      <option value="SUM">Sum</option>
+      <option value="COUNT">Count</option>
+      <option value="AVG">Average</option>
+      <option value="MIN">Minimum</option>
+      <option value="MAX">Maximum</option>
+    </select>
+  </div>
+  
+  <div class="form-group" *ngIf="selectedGroupByField">
+    <label>Aggregate Fields (hold Ctrl/Cmd to select multiple)</label>
+    <select multiple class="form-control" [(ngModel)]="selectedAggregateFields">
+      <option *ngFor="let field of numericFields" [value]="field">{{ field }}</option>
+    </select>
+  </div>
+  
+  <div class="form-group">
+    <button class="btn btn-primary" (click)="generateGroupedReport()" 
+            [disabled]="!selectedGroupByField">
+      <i class="fas fa-chart-bar"></i> Generate Grouped Report
+    </button>
+  </div>
+</div>
+
+
+<div class="results-section" *ngIf="groupedReportData.length">
+  <div class="results-header">
+    <h3>Grouped Report Results</h3>
+    <span class="badge">{{ groupedReportData.length }} groups found</span>
+  </div>
+  
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th *ngFor="let key of getGroupedReportHeaders()">{{ key }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of groupedReportData">
+          <td *ngFor="let key of getGroupedReportHeaders()">{{ row[key] }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div> -->
+
+
+
+
+
+
+
+<!-- <div>
+  <select [(ngModel)]="selectedTemplateId" (change)="onTemplateChange()">
+    <option *ngFor="let t of templates" [value]="t.id">{{ t.name }}</option>
+  </select>
+
+  <app-dynamic-filters [filters]="metadata.filters"></app-dynamic-filters>
+
+  <button (click)="generateReport()">Generate Report</button>
+  <button (click)="exportExcel()">Export to Excel</button>
+
+  <table *ngIf="reportData.length">
+    <thead>
+      <tr>
+        <th *ngFor="let key of metadata.fields">{{ key }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of reportData">
+        <td *ngFor="let key of metadata.fields">{{ row[key] }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div> -->

@@ -1,0 +1,31 @@
+<div class="template-list-container">
+  <div class="header">
+    <h2><i class="fas fa-list"></i> Report Templates</h2>
+    <button class="btn btn-primary" (click)="createNewTemplate()">
+      <i class="fas fa-plus"></i> New Template
+    </button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Template Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let template of templates">
+          <td>{{ template.id }}</td>
+          <td>{{ template.name }}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary" (click)="editTemplate(template.id)">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

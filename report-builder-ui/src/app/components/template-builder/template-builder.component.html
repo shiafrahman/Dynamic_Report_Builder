@@ -1,0 +1,177 @@
+<div class="template-builder-container">
+  <div class="header">
+    <h2><i class="fas fa-file-alt"></i> Create Report Template</h2>
+    <p class="subtitle">Configure your custom report template</p>
+  </div>
+
+  <div class="form-section">
+    <!-- Template Name -->
+    <div class="form-group">
+      <label>Template Name</label>
+      <input type="text" [(ngModel)]="templateName" class="form-control" 
+             placeholder="e.g. Sales Summary Report" required>
+    </div>
+
+    <!-- SQL Query -->
+    <div class="form-group">
+      <label>Base SQL Query</label>
+      <textarea [(ngModel)]="baseQuery" (ngModelChange)="onQueryChange()" rows="5" class="form-control code-editor" 
+                placeholder="SELECT * FROM Sales WHERE 1=1"></textarea>
+      <div class="form-hint">Use WHERE 1=1 as a base for dynamic filter conditions</div>
+      <button type="button" class="btn btn-sm btn-outline-primary mt-2" (click)="loadFieldsFromQuery()">
+        <i class="fas fa-magic"></i> Load Fields Automatically
+      </button>
+    </div>
+  </div>
+
+  <!-- Fields Section -->
+  <div class="form-section">
+    <div class="section-header">
+      <h3><i class="fas fa-columns"></i> Fields to Display</h3>
+      <button type="button" class="btn btn-sm btn-outline-primary" (click)="selectedFields.push('')">
+        <i class="fas fa-plus"></i> Add Field
+      </button>
+    </div>
+    
+    <div class="field-list">
+      <div *ngFor="let field of selectedFields; let i = index" class="field-item">
+        <div class="field-controls">
+          <input type="text" [(ngModel)]="selectedFields[i]" class="form-control" 
+                 placeholder="e.g. InvoiceNo AS 'Invoice No'">
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="selectedFields.splice(i, 1)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div *ngIf="!selectedFields.length" class="empty-state">
+        <i class="fas fa-info-circle"></i>
+        <p>No fields added yet. Click "Add Field" to get started.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="form-section">
+    <div class="section-header">
+      <h3><i class="fas fa-filter"></i> Filters</h3>
+      <button type="button" class="btn btn-sm btn-outline-primary" 
+              (click)="filters.push({ key: '', label: '', type: 'text', value: '' })">
+        <i class="fas fa-plus"></i> Add Filter
+      </button>
+    </div>
+    
+    <div class="filter-list">
+      <div *ngFor="let filter of filters; let i = index" class="filter-item card">
+        <div class="card-body">
+          <div class="filter-controls">
+            <div class="form-group">
+              <label>Filter Key</label>
+              <input type="text" [(ngModel)]="filter.key" class="form-control" 
+                     placeholder="e.g. DateFrom">
+            </div>
+            
+            <div class="form-group">
+              <label>Filter Type</label>
+              <select [(ngModel)]="filter.type" class="form-control">
+                <option value="text">Text</option>
+                <option value="date">Date</option>
+                <option value="dropdown">Dropdown</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Default Value (Optional)</label>
+              <input type="text" [(ngModel)]="filter.value" class="form-control" 
+                     placeholder="Leave blank for no default">
+            </div>
+            
+            <div class="form-group">
+              <label>Display Label</label>
+              <input type="text" [(ngModel)]="filter.label" class="form-control" 
+                     placeholder="Label shown to users">
+            </div>
+          </div>
+          
+          <button type="button" class="btn btn-sm btn-outline-danger" 
+                  (click)="filters.splice(i, 1)">
+            <i class="fas fa-trash"></i> Remove Filter
+          </button>
+        </div>
+      </div>
+      
+      <div *ngIf="!filters.length" class="empty-state">
+        <i class="fas fa-info-circle"></i>
+        <p>No filters added yet. Click "Add Filter" to get started.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save Button -->
+  <div class="actions">
+    <button class="btn btn-primary btn-lg" (click)="saveTemplate()" 
+            [disabled]="!templateName || !baseQuery">
+      <i class="fas fa-save"></i> Save Template
+    </button>
+  </div>
+</div>
+
+
+<div *ngIf="isLoadingFields" class="loading-indicator">
+  <i class="fas fa-spinner fa-spin"></i> Analyzing query...
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <h2>Create Report Template</h2>
+
+<div>
+  <label>Template Name:</label>
+  <input type="text" [(ngModel)]="templateName" placeholder="e.g. Sales Summary Report" />
+</div>
+
+<div>
+  <label>Base SQL Query:</label>
+  <textarea [(ngModel)]="baseQuery" rows="5" placeholder="SELECT * FROM Sales"></textarea>
+</div>
+
+<h3>Fields to Display</h3>
+<div *ngFor="let field of selectedFields; let i = index">
+  <input type="text" [(ngModel)]="selectedFields[i]" placeholder="e.g. InvoiceNo AS 'Invoice No'" />
+  <button type="button" (click)="selectedFields.splice(i, 1)">Remove</button>
+</div>
+<button type="button" (click)="selectedFields.push('')">Add Field</button>
+
+<h3>Filters</h3>
+<div *ngFor="let filter of filters; let i = index">
+  <input type="text" [(ngModel)]="filter.key" placeholder="Filter key e.g. DateFrom" />
+  <select [(ngModel)]="filter.type">
+    <option value="text">Text</option>
+    <option value="date">Date</option>
+    <option value="dropdown">Dropdown</option>
+  </select>
+  <input type="text" [(ngModel)]="filter.value" placeholder="(Optional default value)" />
+  <button type="button" (click)="filters.splice(i, 1)">Remove</button>
+</div>
+<button type="button" (click)="filters.push({ key: '', label: '', type: 'text', value: '' })">
+  Add Filter
+</button>
+
+<br /><br />
+<button (click)="saveTemplate()">Save Template</button> -->
